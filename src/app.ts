@@ -1,16 +1,22 @@
 import express, { Application } from 'express';
-import amqp from 'amqplib';
 import indexRouter from './routes';
+import { createConnection } from './config/channel';
 const app: Application = express();
+async function startServer() {
+  try {
+    await createConnection()
+    app.use('/', indexRouter);
+  app.listen(3000, ()=> {
+    console.log('listening on port 3000');
+  }).on('error', error=>{
+    console.log(error)
+  })
+  } catch (error) {
+    console.log(error);
+  }
 
-async function createConnection() {
-
-  const connection = await amqp.connect('amqp://localhost:5673');
-  const channel = await connection.createChannel();
-  
 }
-
-app.use('/', indexRouter);
+startServer();
 
 
 
